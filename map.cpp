@@ -1,7 +1,7 @@
 /*==============================================================================
 
    マップ管理 [map.cpp]
-	Author :	歐
+	Author :	歐 改造 古市
 	Date   :
 --------------------------------------------------------------------------------
 
@@ -34,16 +34,13 @@ MAP		g_map;
 //=============================================================================
 void InitMap(void)
 {
-	g_MapTexture = LoadTexture("data/TEXTURE/map2.png");
-	g_map.pos.x = SCREEN_WIDTH / 2;
-	g_map.pos.y = SCREEN_HEIGHT / 2;
-	g_map.size.x = SCREEN_WIDTH;
-	g_map.size.y = SCREEN_HEIGHT;
-	for (int i = 0; i < 4; i++)
-	{
-		g_map.uv[i] = 0.0f;
-	}
-	
+	g_MapTexture = LoadTexture("data/TEXTURE/αMAP.png");
+
+	// マップUV情報
+	g_map.u = 0.0f;
+	g_map.v = 0.0f;
+	g_map.uh = VIEW_SCREEN_WIDTH / MAP_X;
+	g_map.vh = VIEW_SCREEN_HEIGHT / MAP_Y;
 }
 
 //=============================================================================
@@ -60,6 +57,10 @@ void UninitMap(void)
 void UpdateMap(void)
 {
 	ChangeUv();
+	//CameraControl();
+
+
+
 }
 
 //=============================================================================
@@ -67,27 +68,89 @@ void UpdateMap(void)
 //=============================================================================
 void DrawMap(void)
 {
-	D3DXCOLOR col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	// マップ描画
+	DrawSpriteLeftTop(g_MapTexture,
+		0.0f, 0.0f,
+		SCREEN_WIDTH, SCREEN_HEIGHT,
+		g_map.u, g_map.v,
+		g_map.uh, g_map.vh);
 
-	DrawSpriteColorRotate(g_MapTexture,
-		g_map.pos.x, g_map.pos.y,
-		g_map.size.x, g_map.size.y,
-		g_map.uv[0], g_map.uv[1],
-		g_map.uv[2], g_map.uv[3],
-		col, 0.0f);
+	// オブジェクト配置を書くならこの辺?
+
 }
 
 void ChangeUv(void)
 {
-	float u, v,uw,vh;
+	float u, v;
+	PLAYER* player = GetPlayer();
 
-	u = GetPlayer()->pos.x / SCREEN_WIDTH - view_size;
-	v = GetPlayer()->pos.y / SCREEN_HEIGHT - view_size;
-	uw = GetPlayer()->pos.x / SCREEN_WIDTH + view_size - u;
-	vh = GetPlayer()->pos.y / SCREEN_HEIGHT+ view_size - v;
+	u = player->pos.x / (MAP_X * 60.0f);
+	v = player->pos.y / (MAP_Y * 60.0f);
 
-	g_map.uv[0] = u;
-	g_map.uv[1] = v;
-	g_map.uv[2] = uw;
-	g_map.uv[3] = vh;
+	// U描画
+	if (u < (g_map.uh / 2))
+	{
+		// 0.33fより小さいとき
+		g_map.u = 0.0f;
+		player->difference.x = -(((g_map.uh / 2) - u) * (MAP_X * 60.0f));
+	}
+	else if (u > (1.0f - (g_map.uh / 2)))
+	{
+		// 0.66fより大きいとき
+		g_map.u = 1.0f - g_map.uh;
+		player->difference.x = ((u - (1.0f - g_map.uh / 2)) * (MAP_X * 60.0f));
+	}
+	else
+	{
+		// それ以外
+		g_map.u = u - (g_map.uh / 2);
+		player->difference.x = 0.0f;
+	}
+
+	// V描画
+	if (v < (g_map.vh / 2))
+	{
+		// 0.25fより小さいとき
+		g_map.v = 0.0f;
+		player->difference.y = -(((g_map.vh / 2) - v) * (MAP_Y * 60.0f));
+	}
+	else if (v > (1.0f - (g_map.vh / 2)))
+	{
+		// 0.75fより大きいとき
+		g_map.v = 1.0f - g_map.vh;
+		player->difference.y = ((v - (1.0f - g_map.vh / 2)) * (MAP_Y * 60.0f));
+	}
+	else
+	{
+		// それ以外
+		g_map.v = v - (g_map.vh / 2);
+		player->difference.y = 0.0f;
+	}
+}
+
+void CameraControl(void)
+{
+	// カメラが右に行き過ぎないように
+	if (g_map.u + g_map.uh > 1.0f)
+	{
+		g_map.u = 1.0f - g_map.uh;
+	}
+
+	// カメラが左に行き過ぎないように
+	if (g_map.u < 0.0f)
+	{
+		g_map.u = 0.0f;
+	}
+
+	// カメラが下に行き過ぎないように
+	if (g_map.v + g_map.vh > 1.0f)
+	{
+		g_map.v = 1.0f - g_map.vh;
+	}
+
+	// カメラが上に行き過ぎないように
+	if (g_map.v < 0.0f)
+	{
+		g_map.v = 0.0f;
+	}
 }

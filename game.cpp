@@ -44,7 +44,7 @@ void InitGame(void)
 {
 	InitPlayer();
 	//InitEnemy();
-	//InitBG();
+	InitBG();
 	InitMap();
 	InitGasGauge();
 }
@@ -55,7 +55,7 @@ void InitGame(void)
 void UninitGame()
 {
 	//‰Šú‰»‚Æ‚Í‹t‡‚ÉI—¹ˆ—‚ğs‚¤
-	//UninitBG();
+	UninitBG();
 	UninitMap();
 	UninitPlayer();
 	//UninitEnemy();
@@ -67,7 +67,7 @@ void UninitGame()
 ------------------------------------------------------------------------------*/
 void UpdateGame(void)
 {
-	//UpdateBG();
+	UpdateBG();
 	UpdateMap();
 	//UpdateEnemy();
 	UpdatePlayer();
@@ -89,7 +89,7 @@ void UpdateGame(void)
 ------------------------------------------------------------------------------*/
 void DrawGame(void)
 {
-	//DrawBG();
+	DrawBG();
 	DrawMap();
 	DrawPlayer();
 	//DrawEnemy();
