@@ -19,12 +19,24 @@
 #define VIEW_SCREEN_WIDTH	(16.0f)		// 表示範囲(横)
 #define VIEW_SCREEN_HEIGHT	(9.0f)		// 表示範囲(縦)
 
+#define CHIP_SIZE			(60.0f)		// マスの大きさ
+
 // α版マップ
-#define MAP_X				(24.0f)		// マップの横のマス数
-#define MAP_Y				(18.0f)		// マップの縦のマス数
+#define MAP_X				(27)		// マップの横のマス数
+#define MAP_Y				(18)		// マップの縦のマス数
 
 // それ以降のマップ
+#define MAP2_X				()			// 2マップ目
+#define MAP2_Y				()			// 2マップ目
 
+#define MAP3_X				()			// 3マップ目
+#define MAP3_Y				()			// 3マップ目
+
+#define MAP4_X				()			// 4マップ目
+#define MAP4_Y				()			// 4マップ目
+
+#define MAP5_X				()			// 5マップ目
+#define MAP5_Y				()			// 5マップ目
 
 //マップ構造体
 typedef struct
@@ -43,5 +55,8 @@ void UninitMap	(void);
 void UpdateMap	(void);
 void DrawMap	(void);
 void ChangeUv   (void);
-void CameraControl(void);
+
+int GetMapEnter(D3DXVECTOR2 pos, D3DXVECTOR2 size);
+int GetMap(int x, int y);
+
 #endif //MAP_H_

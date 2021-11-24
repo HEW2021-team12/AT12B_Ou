@@ -18,10 +18,14 @@
 struct ENEMY
 {
 	bool					use;		// true:使っている  false:未使用
+	bool					watch;		// true:見つけた    false:見つけてない
 	float					w, h;		// 幅と高さ
 	D3DXVECTOR2				pos;		// ポリゴンの座標
-	float					rot;		// ポリゴンの回転量
 	D3DXVECTOR2				vel;		// 移動量
+	float					u;
+	float					v;
+	float					uh;
+	float					vh;
 };
 
 

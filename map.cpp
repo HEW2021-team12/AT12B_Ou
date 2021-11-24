@@ -26,15 +26,45 @@
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
+// 背景用テクスチャ情報
+static int g_Back = 0;
+
+// マップ用テクスチャ情報
 static	int g_MapTexture = 0;
 MAP		g_map;
+
+
+//マップの当たり判定用データ
+int g_map_hitchk[MAP_Y][MAP_X] =
+{
+	{0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0},
+	{0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+	{0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,0},
+	{0,1,0,0,1,1,1,1,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0},
+	{0,1,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,1,0,1,1,1,0,1,1,1},
+	{1,1,0,0,1,1,1,0,1,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1},
+	{1,0,0,0,1,1,1,0,1,1,1,1,0,0,1,1,1,1,1,0,1,0,0,0,0,0,1},
+	{1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1},
+	{1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1},
+	{1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1},
+	{1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1},
+	{1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1},
+	{1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,1,1,0,0,1,1,1},
+	{1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,1,0,0,1,0,0,1,0,0},
+	{0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,0,0},
+	{0,1,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+	{0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+	{0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0}
+};
+
 
 //=============================================================================
 // 初期化処理
 //=============================================================================
 void InitMap(void)
 {
-	g_MapTexture = LoadTexture("data/TEXTURE/αMAP.png");
+	g_Back = LoadTexture("data/TEXTURE/back.jpg");
+	g_MapTexture = LoadTexture("data/MAP/αMAP.png");
 
 	// マップUV情報
 	g_map.u = 0.0f;
@@ -57,9 +87,6 @@ void UninitMap(void)
 void UpdateMap(void)
 {
 	ChangeUv();
-	//CameraControl();
-
-
 
 }
 
@@ -68,6 +95,10 @@ void UpdateMap(void)
 //=============================================================================
 void DrawMap(void)
 {
+
+	// 背景
+	DrawSpriteLeftTop(g_Back, 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f);
+
 	// マップ描画
 	DrawSpriteLeftTop(g_MapTexture,
 		0.0f, 0.0f,
@@ -84,21 +115,21 @@ void ChangeUv(void)
 	float u, v;
 	PLAYER* player = GetPlayer();
 
-	u = player->pos.x / (MAP_X * 60.0f);
-	v = player->pos.y / (MAP_Y * 60.0f);
+	u = player->pos.x / (MAP_X * CHIP_SIZE);
+	v = player->pos.y / (MAP_Y * CHIP_SIZE);
 
 	// U描画
 	if (u < (g_map.uh / 2))
 	{
 		// 0.33fより小さいとき
 		g_map.u = 0.0f;
-		player->difference.x = -(((g_map.uh / 2) - u) * (MAP_X * 60.0f));
+		player->difference.x = -(((g_map.uh / 2) - u) * (MAP_X * CHIP_SIZE));
 	}
 	else if (u > (1.0f - (g_map.uh / 2)))
 	{
 		// 0.66fより大きいとき
 		g_map.u = 1.0f - g_map.uh;
-		player->difference.x = ((u - (1.0f - g_map.uh / 2)) * (MAP_X * 60.0f));
+		player->difference.x = ((u - (1.0f - g_map.uh / 2)) * (MAP_X * CHIP_SIZE));
 	}
 	else
 	{
@@ -112,13 +143,13 @@ void ChangeUv(void)
 	{
 		// 0.25fより小さいとき
 		g_map.v = 0.0f;
-		player->difference.y = -(((g_map.vh / 2) - v) * (MAP_Y * 60.0f));
+		player->difference.y = -(((g_map.vh / 2) - v) * (MAP_Y * CHIP_SIZE));
 	}
 	else if (v > (1.0f - (g_map.vh / 2)))
 	{
 		// 0.75fより大きいとき
 		g_map.v = 1.0f - g_map.vh;
-		player->difference.y = ((v - (1.0f - g_map.vh / 2)) * (MAP_Y * 60.0f));
+		player->difference.y = ((v - (1.0f - g_map.vh / 2)) * (MAP_Y * CHIP_SIZE));
 	}
 	else
 	{
@@ -128,29 +159,48 @@ void ChangeUv(void)
 	}
 }
 
-void CameraControl(void)
+int GetMapEnter(D3DXVECTOR2 pos, D3DXVECTOR2 size)
 {
-	// カメラが右に行き過ぎないように
-	if (g_map.u + g_map.uh > 1.0f)
+	D3DXVECTOR2 min, max;
+
+	min.x = pos.x - size.x / 2;
+	min.y = pos.y - size.y / 2;
+	max.x = pos.x + size.x / 2;
+	max.y = pos.y + size.y / 2;
+
+	int gx = 0;
+	int gy = 0;
+
+	float sx, sy;
+
+	// 横軸
+	for (int x = 0; x < MAP_X; x++)
 	{
-		g_map.u = 1.0f - g_map.uh;
+		sx = CHIP_SIZE * x + (size.x / 2);
+
+		if (min.x < sx + CHIP_SIZE && // プレイヤー小、マップ大
+			max.x > sx)				  // プレイヤー大、マップ小
+		{
+			gx = x;
+		}
 	}
 
-	// カメラが左に行き過ぎないように
-	if (g_map.u < 0.0f)
+	// 縦軸
+	for (int y = 0; y < MAP_Y; y++)
 	{
-		g_map.u = 0.0f;
+		sy = CHIP_SIZE * y + (size.y / 2);
+
+		if (min.y < sy + CHIP_SIZE && // プレイヤー小、マップ大
+			max.y > sy)				  // プレイヤー大、マップ小
+		{
+			gy = y;
+		}
 	}
 
-	// カメラが下に行き過ぎないように
-	if (g_map.v + g_map.vh > 1.0f)
-	{
-		g_map.v = 1.0f - g_map.vh;
-	}
+	return g_map_hitchk[gy][gx];
+}
 
-	// カメラが上に行き過ぎないように
-	if (g_map.v < 0.0f)
-	{
-		g_map.v = 0.0f;
-	}
+int GetMap(int x, int y)
+{
+	return g_map_hitchk[y][x];
 }

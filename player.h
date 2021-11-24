@@ -17,7 +17,9 @@
 //*****************************************************************************
 #define PLAYER_SIZE			(50.0f)
 #define PLAYER_ACCELE		(0.1f)
+#define	PLAYER_MIN_SPD		(0.0f)
 #define PLAYER_MAX_SPD		(3.0f)
+#define SLIDE_TIME			(65.0f)
 
 #define GRAVITY_VEL			(0.5f)
 
@@ -31,6 +33,10 @@ struct PLAYER
 	float		rot;
 	float		rot_vel;
 	bool		vertigo_isUse;
+	float					u;
+	float					v;
+	float					uh;
+	float					vh;
 
 	// マップ用
 	D3DXVECTOR2 difference;

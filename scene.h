@@ -5,8 +5,13 @@ enum SCENE
 {
 	SCENE_NONE,		//シーン処理なし
 	SCENE_TITLE,	//タイトル
+	SCENE_SELECT,   //ステージセレクト
 	SCENE_GAME,		//ゲーム
+
+	// 現在は5ステージ予定
+
 	SCENE_RESULT,	//リザルト
+	SCENE_LOSE,     //GAME OVER
 
 	SCENE_MAX		//最後だとわかる奴をいれる
 };

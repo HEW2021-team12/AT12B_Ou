@@ -13,10 +13,11 @@
 #include "fade.h"
 #include "player.h"
 #include "collision.h"
-#include "bg.h"
 #include "enemy.h"
 #include "gas_gauge.h"
 #include "map.h"
+#include "sound.h"
+#include "timer.h"
 
 /*------------------------------------------------------------------------------
    定数定義
@@ -43,10 +44,13 @@ static int g_BGMNo = 0;
 void InitGame(void)
 {
 	InitPlayer();
-	//InitEnemy();
-	InitBG();
+	InitEnemy();
 	InitMap();
 	InitGasGauge();
+	InitTimer();
+
+	g_BGMNo = LoadSound("data/BGM/BGM.wav");
+	PlaySound(g_BGMNo, 255);
 }
 
 /*------------------------------------------------------------------------------
@@ -54,12 +58,14 @@ void InitGame(void)
 ------------------------------------------------------------------------------*/
 void UninitGame()
 {
+	StopSoundAll();
+
 	//初期化とは逆順に終了処理を行う
-	UninitBG();
 	UninitMap();
 	UninitPlayer();
-	//UninitEnemy();
+	UninitEnemy();
 	UninitGasGauge();
+	UninitTimer();
 }
 
 /*------------------------------------------------------------------------------
@@ -67,20 +73,20 @@ void UninitGame()
 ------------------------------------------------------------------------------*/
 void UpdateGame(void)
 {
-	UpdateBG();
 	UpdateMap();
-	//UpdateEnemy();
+	UpdateEnemy();
 	UpdatePlayer();
 	UpdateGasGauge();
 	
 	UpdateCollision();
+	UpdateTimer();
 
 	//スペースキーが押されていて、フェード処理中ではないとき
 	if (GetKeyboardTrigger(DIK_RETURN) && GetFadeState() == FADE_NONE) 
 	{
 		
 		//RESULTへ移行する
-		//SceneTransition(SCENE_RESULT);
+		SceneTransition(SCENE_RESULT);
 	}
 }
 
@@ -89,10 +95,9 @@ void UpdateGame(void)
 ------------------------------------------------------------------------------*/
 void DrawGame(void)
 {
-	DrawBG();
 	DrawMap();
 	DrawPlayer();
-	//DrawEnemy();
+	DrawEnemy();
 	DrawGasGauge();
+	DrawTimer();
 }
-

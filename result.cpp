@@ -9,6 +9,7 @@
 #include "texture.h"
 #include "sprite.h"
 #include "fade.h"
+#include "sound.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -24,14 +25,17 @@
 // グローバル変数
 //*****************************************************************************
 static int	g_TextureNo = 0;	// テクスチャ情報
-
+static int g_BGMNo = 0;
 
 //=============================================================================
 // 初期化処理
 //=============================================================================
 HRESULT InitResult(void)
 {
-	g_TextureNo = LoadTexture("data/TEXTURE/result.png");
+	g_TextureNo = LoadTexture("data/TEXTURE/clear.png");
+	g_BGMNo = LoadSound("data/BGM/LOSE.wav");
+
+	PlaySound(g_BGMNo, 255);
 
 	return S_OK;
 }
@@ -41,7 +45,7 @@ HRESULT InitResult(void)
 //=============================================================================
 void UninitResult(void)
 {
-
+	StopSoundAll();
 }
 
 //=============================================================================
