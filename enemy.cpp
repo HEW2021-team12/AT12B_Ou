@@ -11,7 +11,6 @@
 #include "player.h"
 #include "map.h"
 #include <time.h>
-#include "sound.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -34,7 +33,6 @@
 // グローバル変数
 //*****************************************************************************
 static int	g_EnemyTexture = 0;
-static int g_watch_SE = 0;
 static ENEMY g_Enemy;							  // エネミー構造体
 static float MAPleft, MAPright, MAPtop, MAPunder; // エネミーの行動範囲
 static int g_Enemy_Timer;
@@ -50,11 +48,15 @@ bool g_MoveCntX, g_MoveCntY;
 HRESULT InitEnemy(void)
 {
 	g_EnemyTexture = LoadTexture("data/TEXTURE/enemy.png");
-	g_watch_SE = LoadSound("data/SE/watch1.wav");
+
+	MAPleft = SCREEN_WIDTH / 2;
+	MAPright = SCREEN_WIDTH / 2;
+
+	MAPtop = SCREEN_HEIGHT / 2;
+	MAPunder = SCREEN_HEIGHT / 2;
 
 	// エネミー構造体の初期化
 	g_Enemy.use   = true;
-	g_Enemy.watch = false;
 	g_Enemy.w     = ENEMY_SIZE;
 	g_Enemy.h     = ENEMY_SIZE;
 	g_Enemy.pos   = D3DXVECTOR2(SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 - 150.0f);
@@ -92,12 +94,6 @@ void UpdateEnemy(void)
 		if (SerchPlayer(GetPlayerPosition(), g_Enemy.pos))
 		{// 見つけた(範囲内に入った)
 
-			if (!g_Enemy.watch)
-			{
-				PlaySound(g_watch_SE, 0);
-				g_Enemy.watch = true;
-			}
-			
 			// 旧版サーチ
 			{
 			//現在位置
@@ -250,15 +246,6 @@ void UpdateEnemy(void)
 		// 見つけていない
 		else 
 		{
-
-		if (g_Enemy.watch)
-		{
-			// 見失った時の処理（SE）
-
-		}
-
-		g_Enemy.watch = false;
-
 			g_Enemy_Timer++;
 
 			if (g_Enemy_Timer > MOVE_TIMER)

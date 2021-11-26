@@ -16,8 +16,7 @@
 #include "enemy.h"
 #include "gas_gauge.h"
 #include "map.h"
-#include "sound.h"
-#include "timer.h"
+#include "keyboard.h"
 
 /*------------------------------------------------------------------------------
    定数定義
@@ -47,10 +46,6 @@ void InitGame(void)
 	InitEnemy();
 	InitMap();
 	InitGasGauge();
-	InitTimer();
-
-	g_BGMNo = LoadSound("data/BGM/BGM.wav");
-	PlaySound(g_BGMNo, 255);
 }
 
 /*------------------------------------------------------------------------------
@@ -58,14 +53,11 @@ void InitGame(void)
 ------------------------------------------------------------------------------*/
 void UninitGame()
 {
-	StopSoundAll();
-
 	//初期化とは逆順に終了処理を行う
 	UninitMap();
 	UninitPlayer();
 	UninitEnemy();
 	UninitGasGauge();
-	UninitTimer();
 }
 
 /*------------------------------------------------------------------------------
@@ -79,14 +71,13 @@ void UpdateGame(void)
 	UpdateGasGauge();
 	
 	UpdateCollision();
-	UpdateTimer();
 
 	//スペースキーが押されていて、フェード処理中ではないとき
-	if (GetKeyboardTrigger(DIK_RETURN) && GetFadeState() == FADE_NONE) 
+	if (Keyboard_IsKeyDown(KK_ENTER) && GetFadeState() == FADE_NONE)
 	{
 		
 		//RESULTへ移行する
-		SceneTransition(SCENE_RESULT);
+		//SceneTransition(SCENE_RESULT);
 	}
 }
 
@@ -99,5 +90,5 @@ void DrawGame(void)
 	DrawPlayer();
 	DrawEnemy();
 	DrawGasGauge();
-	DrawTimer();
 }
+

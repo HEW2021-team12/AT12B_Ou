@@ -9,12 +9,10 @@
 
 #include "scene.h"
 #include "title.h"
-#include "select_scene.h"
 #include "game.h"
 #include "result.h"
 #include "fade.h"
-#include "sound.h"
-#include "game_over.h"
+
 
 /*------------------------------------------------------------------------------
    íËêîíËã`
@@ -51,20 +49,12 @@ void InitScene(SCENE index)
 		InitTitle();
 		break;
 
-	case SCENE_SELECT:
-		InitSelect_Scene();
-		break;
-
 	case SCENE_GAME:
 		InitGame();
 		break;
 
 	case SCENE_RESULT:
 		InitResult();
-		break;
-
-	case SCENE_LOSE:
-		InitGameOver();
 		break;
 	}
 }
@@ -83,20 +73,12 @@ void UninitScene(void)
 		UninitTitle();
 		break;
 
-	case SCENE_SELECT:
-		UninitSelect_Scene();
-		break;
-
 	case SCENE_GAME:
 		UninitGame();
 		break;
 
 	case SCENE_RESULT:
 		UninitResult();
-		break;
-
-	case SCENE_LOSE:
-		UninitGameOver();
 		break;
 	}
 }
@@ -115,10 +97,6 @@ void UpdateScene(void)
 		UpdateTitle();
 		break;
 
-	case SCENE_SELECT:
-		UpdateSelect_Scene();
-		break;
-
 	case SCENE_GAME:
 		UpdateGame();
 		break;
@@ -126,14 +104,9 @@ void UpdateScene(void)
 	case SCENE_RESULT:
 		UpdateResult();
 		break;
-
-	case SCENE_LOSE:
-		UpdateGameOver();
-		break;
 	}
 
 	UpdateFade();
-	
 }
 
 /*------------------------------------------------------------------------------
@@ -150,20 +123,12 @@ void DrawScene(void)
 		DrawTitle();
 		break;
 
-	case SCENE_SELECT:
-		DrawSelect_Scene();
-		break;
-
 	case SCENE_GAME:
 		DrawGame();
 		break;
 
 	case SCENE_RESULT:
 		DrawResult();
-		break;
-
-	case SCENE_LOSE:
-		DrawGameOver();
 		break;
 	}
 

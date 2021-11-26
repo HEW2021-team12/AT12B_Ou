@@ -12,6 +12,7 @@
 #include "sprite.h"
 #include "enemy.h"
 #include "map.h"
+#include "keyboard.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -31,8 +32,6 @@ PLAYER		g_Player;
 float		control_timer;
 float		gravity_timer;
 float		vertigo_timer;
-bool		button_bool;
-float		button_timer;
 
 float		g_DrawGrav = 0;
 
@@ -41,18 +40,12 @@ float		g_DrawGrav = 0;
 //=============================================================================
 HRESULT InitPlayer(void)
 {
-	g_PlayerTexture = LoadTexture("data/TEXTURE/player.png");
+	g_PlayerTexture = LoadTexture("data/TEXTURE/player1.png");
 
 	g_Player.pos.x = CHIP_SIZE * 11;
 	g_Player.pos.y = CHIP_SIZE * 3;
 	g_Player.size.x = PLAYER_SIZE;
 	g_Player.size.y = PLAYER_SIZE;
-	g_Player.vel.x = 0.0f;
-	g_Player.vel.y = 0.0f;
-	g_Player.u = 0.0f;
-	g_Player.v = 0.0f;
-	g_Player.uh = 0.0f;
-	g_Player.vh = 0.0f;
 	g_Player.rot = 0.0f;
 	g_Player.rot_vel = 0.1f;
 	control_timer = 0.0f;
@@ -61,8 +54,6 @@ HRESULT InitPlayer(void)
 	vertigo_timer = 0.0f;
 	g_Player.difference.x = 0.0f;
 	g_Player.difference.y = 0.0f;
-	button_timer = 0.0f;
-	button_bool = true;
 
 	return S_OK;
 }
@@ -80,8 +71,6 @@ void UninitPlayer(void)
 //=============================================================================
 void UpdatePlayer(void)
 {
-
-
 	if (g_Player.rot <= -2.0f || g_Player.rot >= 3.0f)
 	{
 		g_Player.vertigo_isUse = true;
@@ -89,7 +78,7 @@ void UpdatePlayer(void)
 
 	if (g_Player.vertigo_isUse == false)
 	{
-		ZeroGravity();
+		//ZeroGravity();
 		ControlPlayer();
 		FramePlayer();
 	}
@@ -118,75 +107,15 @@ void DrawPlayer(void)
 		SCREEN_WIDTH / 2 + g_Player.difference.x,
 		SCREEN_HEIGHT / 2 + g_Player.difference.y + g_DrawGrav,
 		g_Player.size.x, g_Player.size.y,
-		g_Player.u, g_Player.v,
-		g_Player.uh, g_Player.vh,
+		0.0f, 0.0f,
+		1.0f,1.0f,
 		col, g_Player.rot);
 }
 
 void ControlPlayer(void)
 {
-	if (!(GetKeyboardPress(DIK_UP)
-		&& !IsButtonPressed(0, BUTTON_UP)) &&
-		!(GetKeyboardPress(DIK_DOWN)
-			&& !IsButtonPressed(0, BUTTON_DOWN)) &&
-		!(GetKeyboardPress(DIK_LEFT)
-			&& !IsButtonPressed(0, BUTTON_LEFT)) &&
-		!(GetKeyboardPress(DIK_RIGHT)
-			&& !IsButtonPressed(0, BUTTON_RIGHT)))
-	{
-		button_bool = true;
-	}
-
-	if (button_bool == true)
-	{
-		button_timer += 1.0f;
-	}
-
-	if (button_bool == false)
-	{
-		button_timer = 0.0f;
-	}
-
 	g_Player.pos.x += g_Player.vel.x;
 	g_Player.pos.y += g_Player.vel.y;
-
-	// 横の移動量の方が大きいとき
-	if (fabsf(g_Player.vel.x) > fabsf(g_Player.vel.y))
-	{
-		// 左に行くとき
-		if (g_Player.vel.x < 0)
-		{
-			g_Player.u = 0.0f;
-			g_Player.v = 0.5f;
-			g_Player.uh = 0.5f;
-			g_Player.vh = 0.5f;
-		}
-		else // 右に行くとき
-		{
-			g_Player.u = 0.5f;
-			g_Player.v = 0.5f;
-			g_Player.uh = 0.5f;
-			g_Player.vh = 0.5f;
-		}
-	}
-	else // 縦の移動量の方が大きい or 同じとき
-	{
-		// 上に行くとき
-		if (g_Player.vel.y < 0)
-		{
-			g_Player.u = 0.5f;
-			g_Player.v = 0.0f;
-			g_Player.uh = 0.5f;
-			g_Player.vh = 0.5f;
-		}
-		else // 下に行くとき
-		{
-			g_Player.u = 0.0f;
-			g_Player.v = 0.0f;
-			g_Player.uh = 0.5f;
-			g_Player.vh = 0.5f;
-		}
-	}
 
 	// X軸の当たり判定
 	if (GetMapEnter(D3DXVECTOR2(g_Player.pos.x + g_Player.vel.x, g_Player.pos.y),
@@ -205,10 +134,10 @@ void ControlPlayer(void)
 	}
 
 	//左(移動)
-	if (GetKeyboardPress(DIK_LEFT)
-		|| IsButtonPressed(0, BUTTON_LEFT))
+	if (Keyboard_IsKeyDown(KK_LEFT)
+		|| IsButtonPressed(0, XINPUT_GAMEPAD_DPAD_LEFT))
 	{
-		button_bool = false;
+
 		g_Player.vel.x -= PLAYER_ACCELE;
 
 		// X速度の上限値
@@ -226,10 +155,9 @@ void ControlPlayer(void)
 	}
 
 	//右(移動)
-	if (GetKeyboardPress(DIK_RIGHT)
-		|| IsButtonPressed(0, BUTTON_RIGHT))
+	if (Keyboard_IsKeyDown(KK_RIGHT)
+		|| IsButtonPressed(0, XINPUT_GAMEPAD_DPAD_RIGHT))
 	{
-		button_bool = false;
 		g_Player.vel.x += PLAYER_ACCELE;
 
 		// X速度の上限値
@@ -246,10 +174,9 @@ void ControlPlayer(void)
 	}
 
 	//上(移動)
-	if (GetKeyboardPress(DIK_UP)
-		|| IsButtonPressed(0, BUTTON_UP))
+	if (Keyboard_IsKeyDown(KK_UP)
+		|| IsButtonPressed(0, XINPUT_GAMEPAD_DPAD_UP))
 	{
-		button_bool = false;
 		g_Player.vel.y -= PLAYER_ACCELE;
 
 		// y速度の上限値
@@ -261,10 +188,9 @@ void ControlPlayer(void)
 	}
 	
 	//下(移動)
-	if (GetKeyboardPress(DIK_DOWN)
-		|| IsButtonPressed(0, BUTTON_DOWN))
+	if (Keyboard_IsKeyDown(KK_DOWN)
+		|| IsButtonPressed(0, XINPUT_GAMEPAD_DPAD_DOWN))
 	{
-		button_bool = false;
 		g_Player.vel.y += PLAYER_ACCELE;
 
 		// y速度の上限値
@@ -276,25 +202,19 @@ void ControlPlayer(void)
 	}
 
 	//左回転
-	if (GetKeyboardPress(DIK_Q)
-		|| IsButtonPressed(0, BUTTON_L2))
+	if (Keyboard_IsKeyDown(KK_Q)
+		|| IsButtonPressed(0, XINPUT_GAMEPAD_LEFT_SHOULDER))
 	{
 		g_Player.rot -= 0.01f;
 	}
 
 	//右回転
-	if (GetKeyboardPress(DIK_E)
-		|| IsButtonPressed(0, BUTTON_R2))
+	if (Keyboard_IsKeyDown(KK_E)
+		|| IsButtonPressed(0, XINPUT_GAMEPAD_RIGHT_SHOULDER))
 	{
 		g_Player.rot += 0.01f;
 	}
 
-	if (button_timer >= SLIDE_TIME)
-	{
-		g_Player.vel.x = PLAYER_MIN_SPD;
-		g_Player.vel.y = PLAYER_MIN_SPD;
-		button_timer = 0.0f;
-	}
 }
 
 void ZeroGravity(void)

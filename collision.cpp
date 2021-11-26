@@ -31,6 +31,7 @@ bool CollisionBC(D3DXVECTOR2 pos1, D3DXVECTOR2 pos2, float size1, float size2);
 // グローバル変数
 //*****************************************************************************
 
+
 //=============================================================================
 // 当たり判定処理
 //=============================================================================
@@ -49,7 +50,7 @@ void UpdateCollision(void)
 		if (CollisionBC(player->pos, enemy[i].pos, player->size.y/2, enemy[i].h/2))
 		{
 			// 操作キャラクターは死に
-			SceneTransition(SCENE_LOSE);
+			SceneTransition(SCENE_RESULT);
 
 			// 敵キャラクターは倒される
 			enemy[i].use = false;

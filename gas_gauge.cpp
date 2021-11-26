@@ -11,7 +11,7 @@
 #include "texture.h"
 #include "sprite.h"
 #include "input.h"
-
+#include "keyboard.h"
 //*****************************************************************************
 // ƒ}ƒNƒ’è‹`
 //*****************************************************************************
@@ -73,7 +73,7 @@ void UpdateGasGauge(void)
 {
 	if (GetPlayer()->vertigo_isUse == false)
 	{
-		if (GetKeyboardPress(DIK_Q) || GetKeyboardPress(DIK_E))
+		if (Keyboard_IsKeyDown(KK_Q) || Keyboard_IsKeyDown(KK_E))
 		{
 			gas_gauge2.gauge_vh -= 0.01f;
 		}

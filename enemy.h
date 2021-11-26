@@ -18,7 +18,6 @@
 struct ENEMY
 {
 	bool					use;		// true:使っている  false:未使用
-	bool					watch;		// true:見つけた    false:見つけてない
 	float					w, h;		// 幅と高さ
 	D3DXVECTOR2				pos;		// ポリゴンの座標
 	D3DXVECTOR2				vel;		// 移動量
