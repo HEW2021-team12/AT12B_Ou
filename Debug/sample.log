@@ -1,5 +1,0 @@
-﻿  input.cpp
-input.obj : error LNK2019: 未解決の外部シンボル _XInputGetState@8 が関数 "void __cdecl UpdatePad(void)" (?UpdatePad@@YAXXZ) で参照されました
-input.obj : error LNK2019: 未解決の外部シンボル _XInputSetState@8 が関数 "void __cdecl UninitPad(void)" (?UninitPad@@YAXXZ) で参照されました
-input.obj : error LNK2019: 未解決の外部シンボル _XInputEnable@4 が関数 "long __cdecl InitializePad(void)" (?InitializePad@@YAJXZ) で参照されました
-C:\Users\Owner\Documents\GitHub\AT12B_Ou\Debug\sample.exe : fatal error LNK1120: 3 件の未解決の外部参照
